@@ -5,15 +5,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
-{
-    var settings = config.Build();
+var azureAppConfigurationEndpointUri = builder.Configuration["AzureAppConfiguration:Endpoint"];
 
-    var azureAppConfigurationEndpointUri = settings["AzureAppConfiguration:Endpoint"];
+builder.Host.ConfigureAppConfiguration(builder =>
+{
+    builder.AddEnvironmentVariables();
 
     if (!string.IsNullOrWhiteSpace(azureAppConfigurationEndpointUri))
     {
-        config.AddAzureAppConfiguration(options =>
+        builder.AddAzureAppConfiguration(options =>
         {
             options.Connect(new Uri(azureAppConfigurationEndpointUri), new DefaultAzureCredential())
                 .ConfigureKeyVault(kv =>
