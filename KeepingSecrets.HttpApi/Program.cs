@@ -13,12 +13,14 @@ builder.Host.ConfigureAppConfiguration(builder =>
 
     if (!string.IsNullOrWhiteSpace(azureAppConfigurationEndpointUri))
     {
+        var credentials = new DefaultAzureCredential();
+
         builder.AddAzureAppConfiguration(options =>
         {
-            options.Connect(new Uri(azureAppConfigurationEndpointUri), new DefaultAzureCredential())
+            options.Connect(new Uri(azureAppConfigurationEndpointUri), credentials)
                 .ConfigureKeyVault(kv =>
                 {
-                    kv.SetCredential(new DefaultAzureCredential());
+                    kv.SetCredential(credentials);
                 });
         });
     }
